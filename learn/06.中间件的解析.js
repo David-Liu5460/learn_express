@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 
 
 const app = express();
@@ -28,6 +29,28 @@ app.use((req, res, next) => {
     console.log('common middleware01');
     next();
 });
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads/')
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+
+// 文件上传
+const upload = multer({
+    dest: './uploads/'
+});
+
+app.use(upload.any());
+
+app.post('/upload', upload.single('file'), (req, res, next) => {
+    console.log(res.body);
+    console.log('用户登陆成功')
+})
 
 app.get('/login', (req, res, next) => {
     console.log(req.body);
